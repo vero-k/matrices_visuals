@@ -1,10 +1,6 @@
 @import 'themeStyles.scss';
-$theme-font:    verdana, sans-serif;
+$theme-font: Garamond, serif;
 
 body {
-  font: $theme-font;
-  background-color: $themeColor-Light;
-  h1, h2 {
-      color: $themeColor-Dark
-  }
+
 }

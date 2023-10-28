@@ -6,18 +6,46 @@ import { transpose, inverse } from './matrix'
 
 
 export function createApp() {
-    const closeMainBar = document.getElementById('main-bar-close-bttn')
-    const closeColorBar = document.getElementById('color-bar-close-bttn')
-    const closeOpsBar = document.getElementById('ops-bar-close-bttn')
 
-    const mainBar = document.getElementById('main-bar')
-    const mainBarOpenBttnBar = document.getElementById('button-main-bar')
-    const mainBarOpenBttn = document.getElementById('open-main')
+    const menuToggle = document.getElementById('menuToggle');
+    const menuClose = document.getElementById('menuClose');
+    const sideMenu = document.getElementById('sideMenu');
+    const contentToggles = document.querySelectorAll('.content-toggle');
 
-    const colorBar = document.getElementById('color-bar')
-    const colorBarOpenBttnBar = document.getElementById('button-color-bar')
-    const colorBarOpenBttn = document.getElementById('open-color')
+    menuToggle.addEventListener('click', () => {
+        sideMenu.style.width = '250px';
+        menuToggle.style.display = 'none';
+        menuClose.style.display = 'block';
+    });
 
+    menuClose.addEventListener('click', () => {
+        sideMenu.style.width = '0px';
+        menuToggle.style.display = 'block';
+        menuClose.style.display = 'none';
+    });
+
+    contentToggles.forEach(button => {
+        button.addEventListener('click', () => {
+            // Get the parent container of the button, which is .menu-header
+            const menuHeader = button.parentElement;
+            
+            // Get the next sibling of the .menu-header, which is the content we want to toggle
+            const content = menuHeader.nextElementSibling;
+            
+            const isExpanded = button.getAttribute('data-expanded') === 'true';
+            
+            if (isExpanded) {
+                content.style.display = 'none';
+                button.textContent = '+';
+                button.setAttribute('data-expanded', 'false');
+            } else {
+                content.style.display = 'block';
+                button.textContent = '-';
+                button.setAttribute('data-expanded', 'true');
+            }
+        });
+    });
+    
     const opsBar = document.getElementById('ops-bar')
     const opsBarOpenBttnBar = document.getElementById('button-operation-bar')
     const opsBarOpenBttn = document.getElementById('open-ops')
@@ -25,7 +53,6 @@ export function createApp() {
     const colorBttn1 = document.getElementById('color1')
     const colorBttn2 = document.getElementById('color2')
     const colorBttn3 = document.getElementById('color3')
-    const colorBttn4 = document.getElementById('color4')
 
     const invertBttn = document.getElementById('invert')
     const transposeBttn = document.getElementById('transpose')
@@ -79,7 +106,7 @@ export function createApp() {
     let currentY = -1
 
     let currentColor = '#b01e3e'
-    let colorGrid = '#5e3941'
+    let colorGrid = '#0e5f54'
     let gridLine = 1
 
     let outputDataForm = ''
@@ -90,61 +117,7 @@ export function createApp() {
     let mouseIsDown = false
 
     const resizing = 0
-
-    closeMainBar.addEventListener(
-        'click',
-        () => {
-            mainBar.style.display = 'none'
-            mainBarOpenBttnBar.style.display = 'block'
-        },
-        false
-    )
-
-    closeColorBar.addEventListener(
-        'click',
-        () => {
-            colorBar.style.display = 'none'
-            colorBarOpenBttnBar.style.display = 'block'
-        },
-        false
-    )
-
-    closeOpsBar.addEventListener(
-        'click',
-        () => {
-            opsBar.style.display = 'none'
-            opsBarOpenBttnBar.style.display = 'block'
-        },
-        false
-    )
-
-    mainBarOpenBttn.addEventListener(
-        'click',
-        () => {
-            mainBar.style.display = 'grid'
-            mainBarOpenBttnBar.style.display = 'none'
-        },
-        false
-    )
-
-    colorBarOpenBttn.addEventListener(
-        'click',
-        () => {
-            colorBar.style.display = 'grid'
-            colorBarOpenBttnBar.style.display = 'none'
-        },
-        false
-    )
-
-    opsBarOpenBttn.addEventListener(
-        'click',
-        () => {
-            opsBar.style.display = 'grid'
-            opsBarOpenBttnBar.style.display = 'none'
-        },
-        false
-    )
-
+    
     function getMousePos(evt) {
         const rect = canvas.getBoundingClientRect()
         const x = evt.clientX - rect.left
@@ -219,7 +192,7 @@ export function createApp() {
     function drawGrid() {
         for (let i = 0; i < countWidth; i++) {
             for (let j = 0; j < countHeight; j++) {
-                //ctx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+                ctx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
 
                 ctx.lineWidth = gridLine.toString()
 
@@ -386,11 +359,7 @@ export function createApp() {
         (event) => setCurrentColor(event.target.value),
         false
     )
-    colorBttn4.addEventListener(
-        'dblclick',
-        (event) => setCurrentColor(event.target.value),
-        false
-    )
+
     colorBttn1.addEventListener(
         'click',
         (event) => setCurrentColor(event.target.value),
@@ -406,11 +375,7 @@ export function createApp() {
         (event) => setCurrentColor(event.target.value),
         false
     )
-    colorBttn4.addEventListener(
-        'click',
-        (event) => setCurrentColor(event.target.value),
-        false
-    )
+
 
     fileInput.addEventListener(
         'change',
