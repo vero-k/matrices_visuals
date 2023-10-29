@@ -1,2 +1,36 @@
-# Ignore artifacts:
+
+
 node_modules/
+
+public/
+
+# IDE and editor folders/files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+
+# Environment configuration
+.env
+.env.local
+
+# Other build outputs or temporary files
+*.bak
+*.cache
+*.old
+*.save
+
+
+npm-debug.log*
+
+
+yarn-error.log
+.yarn-integrity
