@@ -6,6 +6,8 @@
     --accent-color: #dff5da; /* Wheat */
     --border-color: #ddc7b7; /* Saddle Brown */
     --background-color: #ffffff; /* Pale Goldenrod */
+    --font-color: #313131;
+    
 }
 
 
@@ -59,12 +61,12 @@ body, html {
     transition: width 0.3s;
     font-family: Garamond, serif;
     background-color: var(--background-color);
-    color: var(--primary-color);
+    color: var(--font-color);
     grid-area: sidebar; 
 }
 
 .menu-header h3 {
-    color: var(--secondary-color);
+    color: var(--font-color);
 }
 
 .menu-header {
@@ -99,7 +101,16 @@ button:hover, .menu-bttn:hover, .menu-bttn-expand:hover {
 }
 
 
+.bttnSingleOps{
+    color: #aaa;
+    background-color: #ddd;
 
+    /* Prevent mouse events */
+    pointer-events: none;
+
+    /* Optional: Add a not-allowed cursor icon */
+    cursor: not-allowed;
+}
 
 /* Consistent Styling for Labels */
 label {
@@ -176,6 +187,36 @@ input[type="number"]:focus, input[type="file"]:focus, input[type="color"]:focus,
     margin-bottom: 20px;
     padding-right: 20px;
     padding-left: 20px;
+}
+
+#matrix-size{
+    display: none;
+}
+
+#matrix-input{
+    display: none;
+}
+
+
+#matrix-output{
+    display: none;
+}
+
+
+#matrix-colors{
+    display: none;
+}
+
+#matrix-single-ops{
+    display: none;
+}
+
+#matrix-multi-ops{
+    display: none;
+}
+
+#matrix-special{
+    display: none;
 }
 
 .sizeInput, .dataInput, .dataOutput, .inputColor, .addmatrixInput {

@@ -2,7 +2,7 @@
 
 import { convertColorIntoDataArray, convertDataIntoColor } from './color'
 import { makeCSV, processData } from './csv'
-import { transpose, inverse } from './matrix'
+import { transpose, inverse, diagonal, identity } from './matrix'
 
 
 export function createApp() {
@@ -11,52 +11,19 @@ export function createApp() {
     const menuClose = document.getElementById('menuClose');
     const sideMenu = document.getElementById('sideMenu');
     const contentToggles = document.querySelectorAll('.content-toggle');
-
-    menuToggle.addEventListener('click', () => {
-        sideMenu.style.width = '250px';
-        menuToggle.style.display = 'none';
-        menuClose.style.display = 'block';
-    });
-
-    menuClose.addEventListener('click', () => {
-        sideMenu.style.width = '0px';
-        menuToggle.style.display = 'block';
-        menuClose.style.display = 'none';
-    });
-
-    contentToggles.forEach(button => {
-        button.addEventListener('click', () => {
-            // Get the parent container of the button, which is .menu-header
-            const menuHeader = button.parentElement;
-            
-            // Get the next sibling of the .menu-header, which is the content we want to toggle
-            const content = menuHeader.nextElementSibling;
-            
-            const isExpanded = button.getAttribute('data-expanded') === 'true';
-            
-            if (isExpanded) {
-                content.style.display = 'none';
-                button.textContent = '+';
-                button.setAttribute('data-expanded', 'false');
-            } else {
-                content.style.display = 'block';
-                button.textContent = '-';
-                button.setAttribute('data-expanded', 'true');
-            }
-        });
-    });
     
-    const opsBar = document.getElementById('ops-bar')
-    const opsBarOpenBttnBar = document.getElementById('button-operation-bar')
-    const opsBarOpenBttn = document.getElementById('open-ops')
-
     const colorBttn1 = document.getElementById('color1')
     const colorBttn2 = document.getElementById('color2')
     const colorBttn3 = document.getElementById('color3')
 
+    const makeDiagonalMatrixBttn = document.getElementById('diagonal')
+    const makeIdentityMatrixBttn = document.getElementById('identity')
+
     const invertBttn = document.getElementById('invert')
     const transposeBttn = document.getElementById('transpose')
     const reflectBttn = document.getElementById('reflect')
+
+    const matrixCountBttn = document.getElementById('matrixcountbttn')
 
     const currentColorMonitor = document.getElementById('currentColorMonitor')
 
@@ -84,6 +51,8 @@ export function createApp() {
 
     const unit = 20
 
+    let matrixCount = 1
+
     let canvasWidth = 600
     let canvasHeight = 600
 
@@ -102,10 +71,15 @@ export function createApp() {
     let fillArray = []
     let prevFillArray = []
 
+    let fillArrayTwo = []
+    let prevFillArrayTwo = []
+
     let currentX = -1
     let currentY = -1
 
-    let currentColor = '#b01e3e'
+    let currentMatrix = 1
+
+    let currentColor = '#000000'
     let colorGrid = '#0e5f54'
     let gridLine = 1
 
@@ -116,7 +90,82 @@ export function createApp() {
 
     let mouseIsDown = false
 
-    const resizing = 0
+
+    menuToggle.addEventListener('click', () => {
+        sideMenu.style.width = '250px';
+        menuToggle.style.display = 'none';
+        menuClose.style.display = 'block';
+    });
+
+    menuClose.addEventListener('click', () => {
+        sideMenu.style.width = '0px';
+        menuToggle.style.display = 'block';
+        menuClose.style.display = 'none';
+    });
+
+
+    matrixCountBttn.addEventListener('click', (event) => {
+        if(matrixCount === 1){
+            matrixCount = 2;
+            addMatrix()
+            event.target.textContent = "Remove Matrix"
+            let nextSibling = event.target.nextElementSibling;
+            while (nextSibling) {
+                nextSibling.style.color = "#dff5da"; 
+                nextSibling.style.backgroundColor = '#0e5f54'; 
+                nextSibling.style.pointerEvents = 'default'; 
+                nextSibling.style.cursor = 'pointer';
+                nextSibling = nextSibling.nextElementSibling;
+            }
+        } else {
+            matrixCount = 1
+            removeMatrix()
+            event.target.textContent = "Add Matrix"
+            let nextSibling = event.target.nextElementSibling;
+            while (nextSibling) {
+                nextSibling.style.color = "#aaa"; 
+                nextSibling.style.backgroundColor = '#ddd'; 
+                nextSibling.style.pointerEvents = 'none'; 
+                nextSibling.style.cursor = 'not-allowed';
+                nextSibling = nextSibling.nextElementSibling;
+            }
+        }
+    })
+
+
+    function addMatrix(){
+        alert("yet to be  implemented")
+        return null
+    }
+
+    function removeMatrix(){
+        alert("yet to be implemented")
+        return null
+    }
+
+    contentToggles.forEach(button => {
+        button.addEventListener('click', () => {
+            // Get the parent container of the button, which is .menu-header
+            const menuHeader = button.parentElement;
+            
+            // Get the next sibling of the .menu-header, which is the content we want to toggle
+            const content = menuHeader.nextElementSibling;
+            
+            const isExpanded = button.getAttribute('data-expanded') === 'true';
+            
+            if (isExpanded) {
+                content.style.display = 'none';
+                button.textContent = '+';
+                button.setAttribute('data-expanded', 'false');
+            } else {
+                content.style.display = 'block';
+                button.textContent = '-';
+                button.setAttribute('data-expanded', 'true');
+            }
+        });
+    });
+
+    
     
     function getMousePos(evt) {
         const rect = canvas.getBoundingClientRect()
@@ -162,7 +211,7 @@ export function createApp() {
             fillArray[i] = new Array(countHeight)
 
             for (let j = 0; j < countHeight; j++) {
-                fillArray[i][j] = null
+                fillArray[i][j] = '#ffffff'
             }
         }
     }
@@ -199,7 +248,7 @@ export function createApp() {
                 ctx.strokeStyle = colorGrid
                 ctx.strokeRect(i * unit, j * unit, unit, unit)
 
-                if (fillArray[i][j]) {
+                if (fillArray[i][j] !== '#ffffff') {
                     ctx.fillStyle = fillArray[i][j]
                     ctx.fillRect(i * unit, j * unit, unit, unit)
                 }
@@ -241,9 +290,9 @@ export function createApp() {
                     if (
                         j >= countHeight ||
                         i >= countWidth ||
-                        prevFillArray[i][j] === null
+                        prevFillArray[i][j] === '#ffffff'
                     ) {
-                        fillArray[i][j] = null
+                        fillArray[i][j] = '#ffffff'
                     } else {
                         fillArray[i][j] = prevFillArray[i][j]
                     }
@@ -263,8 +312,8 @@ export function createApp() {
             currentX = Math.floor(mousePos.x / unit)
             currentY = Math.floor(mousePos.y / unit)
 
-            if (fillArray[currentX][currentY]) {
-                fillArray[currentX][currentY] = null
+            if (fillArray[currentX][currentY] !== '#ffffff') {
+                fillArray[currentX][currentY] = '#ffffff'
                 ctx.clearRect(currentX * unit, currentY * unit, unit, unit)
 
                 ctx.lineWidth = gridLine.toString()
@@ -345,37 +394,37 @@ export function createApp() {
     }
 
     colorBttn1.addEventListener(
-        'dblclick',
+        'input',
         (event) => setCurrentColor(event.target.value),
         false
     )
     colorBttn2.addEventListener(
-        'dblclick',
+        'input',
         (event) => setCurrentColor(event.target.value),
         false
     )
     colorBttn3.addEventListener(
-        'dblclick',
+        'input',
         (event) => setCurrentColor(event.target.value),
         false
     )
 
-    colorBttn1.addEventListener(
-        'click',
+    /* colorBttn1.addEventListener(
+        'change',
         (event) => setCurrentColor(event.target.value),
         false
     )
     colorBttn2.addEventListener(
-        'click',
+        'change',
         (event) => setCurrentColor(event.target.value),
         false
     )
     colorBttn3.addEventListener(
-        'click',
+        'change',
         (event) => setCurrentColor(event.target.value),
         false
     )
-
+ */
 
     fileInput.addEventListener(
         'change',
@@ -399,8 +448,7 @@ export function createApp() {
 
                 reader.onload = function () {
                     const csvdata = reader.result
-                    const { arrayOfRows, maxLength, seperatedData } =
-                        processData(csvdata)
+                    const { arrayOfRows, maxLength, seperatedData } = processData(csvdata)
                     const height = arrayOfRows.length
                     const width = maxLength
 
@@ -449,13 +497,48 @@ export function createApp() {
 
     invertBttn.addEventListener(
         'click',
-        () => inverse(fillArray, countWidth, countHeight),
+        (event) => {
+            event.preventDefault();
+            fillArray = inverse(fillArray);
+            reInitializeGrid(fillArray, countHeight, countWidth); 
+        },
         false
     )
 
     transposeBttn.addEventListener(
         'click',
-        () => transpose(fillArray, countWidth, countHeight, reInitializeGrid),
+        (event) => {
+            event.preventDefault(); 
+            fillArray = transpose(fillArray, countWidth, countHeight);
+            reInitializeGrid(fillArray, countHeight, countWidth);
+        }
+    );
+
+    reflectBttn.addEventListener(
+        'click',
+        (event) => {
+            event.preventDefault(); 
+            fillArray = transpose(fillArray, countWidth, countHeight);
+            reInitializeGrid(fillArray, countHeight, countWidth);
+        },
         false
+    );
+
+
+    makeDiagonalMatrixBttn.addEventListener('click',
+        (event) => {
+            event.preventDefault(); 
+            fillArray = diagonal(fillArray, countWidth, countHeight)
+            reInitializeGrid(fillArray, countHeight, countWidth)
+        }, false
+    )
+
+
+    makeIdentityMatrixBttn.addEventListener('click',
+        (event) => {
+            event.preventDefault()
+            fillArray = identity(countWidth, countHeight)
+            reInitializeGrid(fillArray, countHeight, countWidth)
+        }, false
     )
 }

@@ -1,3 +1,60 @@
+
+import { colorTo01Matrix, matrix01ToColor } from "./util"
+
+
+export function identity(matrix, width, height) {
+    if(width == height){
+        const array = new Array(height)
+        for (let i = 0; i < height; i++) {
+            array[i] = new Array(width)
+
+            for (let j = 0; j < width; j++) {
+                if (i == j) {
+                    array[i][j] = '#000000'
+                    
+                } else {
+                    array[i][j] = '#ffffff'
+                }
+            }
+        }
+        return array;
+    } else {
+        alert('matrix must be a square matrix')
+        return matrix;
+    }
+
+}
+
+export function diagonal(orgArray, width, height){
+    if(width == height){
+        const array = new Array(height)
+        for (let i = 0; i < height; i++) {
+            array[i] = new Array(width)
+
+            for (let j = 0; j < width; j++) {
+                if (i == j) {
+                    if(orgArray[i][j] === '#ffffff'){
+                        array[i][j] = '#000000'
+                    } else {
+                        array[i][j] = orgArray[i][j]
+                    }
+                    
+                } else {
+                    array[i][j] = '#ffffff'
+                }
+            }
+        }
+        return array
+    } else {
+        return null;
+    }
+}
+
+
+function get(){
+    return null
+}
+
 function getMinor(array, i, j) {
     const minor = []
     const n = array.length
@@ -17,87 +74,56 @@ function getMinor(array, i, j) {
     return minor
 }
 
-function adj(array) {
-    // Check if the matrix is square
-    if (array.length !== array[0].length) {
-        return null
-    }
 
-    const n = array.length
-    const adjugate = []
-
-    for (let i = 0; i < n; i++) {
-        adjugate[i] = []
-
-        for (let j = 0; j < n; j++) {
-            const cofactor = (-1) ** (i + j) * det(getMinor(array, i, j))
-            adjugate[i][j] = cofactor
-        }
-    }
-
-    // Transpose the adjugate matrix to get the inverse
-    return transp(adjugate)
-}
-
-function det(array) {
-    // Check if the matrix is square
-    if (array.length !== array[0].length) {
-        return 0
-    }
-
-    const n = array.length
-
-    // Base case for 2x2 matrix
-    if (n === 2) {
-        return array[0][0] * array[1][1] - array[0][1] * array[1][0]
-    }
-
-    let determinant = 0
-
-    // Compute determinant using cofactor expansion along first row
-    for (let j = 0; j < n; j++) {
-        const cofactor = (-1) ** j * array[0][j]
-        const minor = getMinor(array, 0, j)
-        determinant += cofactor * det(minor)
-    }
-
-    return determinant
-}
 
 function sMulti(array, scalar) {
     return array.map((row) => row.map((entry) => entry * scalar))
 }
 
-function transp(array) {
-    const n = array.length
-    const transpose = []
+function determinant(matrix) {
+    if (matrix.length === 1) {
+        return matrix[0][0];
+    }
+    if (matrix.length === 2) {
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+    }
+    let det = 0;
+    for (let i = 0; i < matrix.length; i++) {
+        let subMatrix = matrix.slice(1).map(row => row.filter((_, j) => j !== i));
+        det += matrix[0][i] * Math.pow(-1, i) * determinant(subMatrix);
+    }
+    return det;
+}
 
-    for (let i = 0; i < n; i++) {
-        transpose[i] = []
 
-        for (let j = 0; j < n; j++) {
-            transpose[i][j] = array[j][i]
+export function inverse(matrix) {
+    if (matrix.length !== matrix[0].length) {
+        alert('Matrix must be square');
+        return matrix
+    }
+
+    let numberMatrix = matrix01ToColor(matrix)
+    let det = determinant(numberMatrix);
+    if (det === 0) {
+        alert('Matrix has no inverse (determinant is zero)');
+        return matrix
+    }
+
+    let inverse = [];
+    
+    for (let i = 0; i < matrix.length; i++) {
+        inverse.push([]);
+        for (let j = 0; j < matrix.length; j++) {
+            // Calculate cofactor
+            let subMatrix = numberMatrix.filter((_, k) => k !== i).map(row => row.filter((_, l) => l !== j));
+            inverse[i][j] = Math.pow(-1, i + j) * determinant(subMatrix) / det;
         }
     }
-
-    return transpose
+    return matrix01ToColor(inverse);
 }
 
-export function inverse(array, width, height, reinitializeGrid) {
-    const determinant = det(array)
 
-    // Check if the determinant is zero (matrix is not invertible)
-    if (determinant === 0) {
-        return null
-    }
-
-    const adjugate = adj(array)
-    const inverse = sMulti(adjugate, 1 / determinant)
-
-    return inverse
-}
-
-export function transpose(array, width, height, reinitializeGrid) {
+export function transpose(array, width, height) {
     const prevArray = array
     array = new Array(height)
     for (let i = 0; i < height; i++) {
@@ -112,5 +138,5 @@ export function transpose(array, width, height, reinitializeGrid) {
         }
     }
 
-    reinitializeGrid(array, height, width)
+    return array
 }

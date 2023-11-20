@@ -106,12 +106,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       hash: true,
       template: "./src/index.html",
-      file: "./dist/index.html",
+      file: "./public/index.html",
       title: "Title of App",
       scriptLoading: "defer",
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: "src", to: "dist" }],
+      patterns: [{ from: "src", to: "public" }],
     }),
     new ESLintPlugin({
       extensions: ["js", "ts", "tsx"],
